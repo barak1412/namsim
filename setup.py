@@ -8,6 +8,6 @@ setup(
     license="MIT",
     keywords="Name similarity mock-up library.",
     packages=['namsim', 'namsim.wrapper', 'namsim.data'],
-    package_date={'data': ['default_namsim_conf/*']},
+    package_data={'data': ['default_namsim_conf/*', 'bin/*']},
     include_package_data=True
 )
