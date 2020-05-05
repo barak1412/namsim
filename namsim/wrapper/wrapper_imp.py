@@ -21,10 +21,13 @@ def _get_handler(dll_name):
         raise Exception('Unsupported platform: {}'.format(os_platform))
 
     # set functions signature
-    handler.NamsimInit.argtypes = [ctypes.c_char_p]
+    handler.NamsimInit.argtypes = [ctypes.c_int, ctypes.c_char_p]
     handler.NamsimInit.restype = ctypes.c_int
 
-    handler.NamsimSimilarity.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.POINTER(ctypes.c_double)]
+    handler.NamsimDone.argtypes = [ctypes.c_int]
+    handler.NamsimDone.restype = ctypes.c_int
+
+    handler.NamsimSimilarity.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_char_p, ctypes.POINTER(ctypes.c_double)]
     handler.NamsimSimilarity.restype = ctypes.c_int
 
     return handler
@@ -42,18 +45,22 @@ class NamsimWrapper(object):
         return s.encode('utf-16le') + b'\x00'
 
     @staticmethod
-    def namsim_init(conf_path=None):
+    def namsim_init(namsim_id, conf_path=None):
         if conf_path is None:
             conf_path = get_data_path(os.path.join(_NAMSIM_CONF_DIRECTORY, 'conf', 'namsim_config.xml'))
         conf_path = NamsimWrapper._prepare_encoded_string(conf_path)
 
-        return NamsimWrapper._handler.NamsimInit(conf_path)
+        return NamsimWrapper._handler.NamsimInit(namsim_id, conf_path)
 
     @staticmethod
-    def namsim_similarity(str1, str2):
+    def namsim_done(namsim_id):
+        return NamsimWrapper._handler.NamsimDone(namsim_id)
+
+    @staticmethod
+    def namsim_similarity(namsim_id, str1, str2):
         str1 = NamsimWrapper._prepare_encoded_string(str1)
         str2 = NamsimWrapper._prepare_encoded_string(str2)
         similarity = ctypes.c_double(0.0)
 
-        error_code = NamsimWrapper._handler.NamsimSimilarity(str1, str2, ctypes.pointer(similarity))
+        error_code = NamsimWrapper._handler.NamsimSimilarity(namsim_id, str1, str2, ctypes.pointer(similarity))
         return error_code, similarity.value
