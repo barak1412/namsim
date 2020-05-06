@@ -14,11 +14,12 @@ def _get_handler(dll_name):
     handler = None
     if os_platform == 'windows':
         dll_path = os.path.join(dll_dir, dll_name + '.dll')
-        handler = ctypes.cdll.LoadLibrary(dll_path)
     elif os_platform == 'linux':
-        return None
+        dll_path = os.path.join(dll_dir, dll_name + '.so')
     else:
         raise Exception('Unsupported platform: {}'.format(os_platform))
+
+    handler = ctypes.cdll.LoadLibrary(dll_path)
 
     # set functions signature
     handler.NamsimInit.argtypes = [ctypes.c_int, ctypes.c_char_p]
