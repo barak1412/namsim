@@ -1,4 +1,4 @@
-from namsim.wrapper import NamsimWrapper
+from namsim.wrapper.wrapper_imp import NamsimWrapper
 
 
 class Namsim(object):
@@ -21,7 +21,7 @@ class Namsim(object):
 
         # create instance, on failure push back the free id
         error_code = NamsimWrapper.namsim_init(namsim_id, conf_path=conf_path)
-        Namsim._validate_error_code(error_code, on_failure=lambda : Namsim._free_ids_list.append(namsim_id))
+        Namsim._validate_error_code(error_code, on_failure=lambda: Namsim._free_ids_list.append(namsim_id))
 
         self._id = namsim_id
 

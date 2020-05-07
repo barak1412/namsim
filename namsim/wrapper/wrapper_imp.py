@@ -1,6 +1,5 @@
 import ctypes
 from namsim.data import get_data_path
-from namsim import _NAMSIM_CONF_DIRECTORY
 import platform
 import os
 
@@ -48,7 +47,8 @@ class NamsimWrapper(object):
     @staticmethod
     def namsim_init(namsim_id, conf_path=None):
         if conf_path is None:
-            conf_path = get_data_path(os.path.join(_NAMSIM_CONF_DIRECTORY, 'conf', 'namsim_config.xml'))
+            conf_dir_name = 'default_namsim_conf'
+            conf_path = get_data_path(os.path.join(conf_dir_name, 'conf', 'namsim_config.xml'))
         conf_path = NamsimWrapper._prepare_encoded_string(conf_path)
 
         return NamsimWrapper._handler.NamsimInit(namsim_id, conf_path)
