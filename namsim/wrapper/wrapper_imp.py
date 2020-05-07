@@ -2,22 +2,31 @@ import ctypes
 from namsim.data import get_data_path
 import platform
 import os
+from pkg_resources import get_distribution
 
 
-def _get_handler(dll_name):
+def _get_handler(dll_prefix):
     # retrieve os ('windows' or 'linux')
     os_platform = str(platform.system()).lower()
     dll_dir = get_data_path(os.path.join('bin', os_platform))
 
     # load dll based on platform
     handler = None
+    platform_letter = None
+    platform_dll_type = None
     if os_platform == 'windows':
-        dll_path = os.path.join(dll_dir, dll_name + '.dll')
+        platform_letter = 'W'
+        platform_dll_type = 'dll'
     elif os_platform == 'linux':
-        dll_path = os.path.join(dll_dir, dll_name + '.so')
+        platform_letter = 'L'
+        platform_dll_type = 'so'
     else:
         raise Exception('Unsupported platform: {}'.format(os_platform))
 
+    version_major = get_distribution('namsim').version.split('.')[0]
+    version_minor = get_distribution('namsim').version.split('.')[1]
+    dll_name = '{}_{}64_{}_{}.{}'.format(dll_prefix, platform_letter, version_major, version_minor, platform_dll_type)
+    dll_path = os.path.join(dll_dir, dll_name)
     handler = ctypes.cdll.LoadLibrary(dll_path)
 
     # set functions signature
@@ -35,7 +44,7 @@ def _get_handler(dll_name):
 
 class NamsimWrapper(object):
 
-    DLL_NAME = 'NAMSIMAPI'
+    DLL_NAME = 'NamsimCAPI'
 
     # static handler for the compiled library
     _handler = _get_handler(DLL_NAME)

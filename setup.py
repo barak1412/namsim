@@ -10,5 +10,5 @@ setup(
     packages=['namsim', 'namsim.wrapper', 'namsim.data'],
     package_data={'data': ['default_namsim_conf/*', 'bin/*']},
     include_package_data=True,
-    conf_dir_name='default_namsim_conf'
+    python_requires='>=3'
 )
