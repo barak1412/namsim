@@ -13,6 +13,7 @@ class Namsim(object):
             raise Exception('Internal error has occurred with error code: {}.'.format(error_code))
 
     def __init__(self, conf_path=None):
+        self._id = None
         if len(Namsim._free_ids_list) == 0:
             raise Exception("Number of Namsim instances exceeded the maximum {}.".format(Namsim.MAX_INSTANCES))
 
@@ -31,7 +32,9 @@ class Namsim(object):
 
         return sim
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __del__(self):
+        if self._id is None:
+            return;
         error_code = NamsimWrapper.namsim_done(self._id)
         Namsim._validate_error_code(error_code)
 
