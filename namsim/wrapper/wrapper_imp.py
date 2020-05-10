@@ -45,6 +45,7 @@ def _get_handler(dll_prefix):
 class NamsimWrapper(object):
 
     DLL_NAME = 'NamsimCAPI'
+    MAX_BUFFER_LENGTH = 256
 
     # static handler for the compiled library
     _handler = _get_handler(DLL_NAME)
@@ -52,6 +53,21 @@ class NamsimWrapper(object):
     @staticmethod
     def _prepare_encoded_string(s):
         return s.encode('utf-16le') + b'\x00'
+
+    @staticmethod
+    def _decode_buffer(buff):
+        address = ctypes.addressof(buff)
+        chars = []
+        i = 0
+        while i < NamsimWrapper.MAX_BUFFER_LENGTH*2+1:
+            c1 = ctypes.c_char.from_address(address).value
+            c2 = ctypes.c_char.from_address(address+1).value
+            if c1 == b'\x00' and c2 == b'\x00':
+                break
+            chars += [c1, c2]
+            address += 2
+            i += 1
+        return b''.join(chars).decode('utf-16le')
 
     @staticmethod
     def namsim_init(namsim_id, conf_path=None):
@@ -74,3 +90,19 @@ class NamsimWrapper(object):
 
         error_code = NamsimWrapper._handler.NamsimSimilarity(namsim_id, str1, str2, ctypes.pointer(similarity))
         return error_code, similarity.value
+
+    @staticmethod
+    def get_error_message(error_code):
+        NamsimWrapper._handler.GetErrorMessage.argtypes = [ctypes.c_int, ctypes.c_char_p]
+        NamsimWrapper._handler.GetErrorMessage.restype = ctypes.c_int
+
+        # create buffer for message
+        error_message_buffer = ctypes.create_string_buffer(NamsimWrapper.MAX_BUFFER_LENGTH*2 + 1)
+        call_error_code = NamsimWrapper._handler.GetErrorMessage(error_code, error_message_buffer)
+
+        # decode error message
+        error_message = NamsimWrapper._decode_buffer(error_message_buffer)
+
+        return call_error_code, error_message
+
+
