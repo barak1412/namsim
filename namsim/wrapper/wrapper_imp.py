@@ -39,6 +39,9 @@ def _get_handler(dll_prefix):
     handler.NamsimSimilarity.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_char_p, ctypes.POINTER(ctypes.c_double)]
     handler.NamsimSimilarity.restype = ctypes.c_int
 
+    handler.GetErrorMessage.argtypes = [ctypes.c_int, ctypes.c_char_p]
+    handler.GetErrorMessage.restype = ctypes.c_int
+
     return handler
 
 
@@ -93,9 +96,6 @@ class NamsimWrapper(object):
 
     @staticmethod
     def get_error_message(error_code):
-        NamsimWrapper._handler.GetErrorMessage.argtypes = [ctypes.c_int, ctypes.c_char_p]
-        NamsimWrapper._handler.GetErrorMessage.restype = ctypes.c_int
-
         # create buffer for message
         error_message_buffer = ctypes.create_string_buffer(NamsimWrapper.MAX_BUFFER_LENGTH*2 + 1)
         call_error_code = NamsimWrapper._handler.GetErrorMessage(error_code, error_message_buffer)
