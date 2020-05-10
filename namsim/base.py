@@ -34,7 +34,7 @@ class Namsim(object):
 
     def __del__(self):
         if self._id is None:
-            return;
+            return
         error_code = NamsimWrapper.namsim_done(self._id)
         Namsim._validate_error_code(error_code)
 
