@@ -10,7 +10,14 @@ class Namsim(object):
         if error_code != 0:
             if on_failure is not None:
                 on_failure()
-            raise Exception('Internal error has occurred with error code: {}.'.format(error_code))
+
+            # dispatch error code if possible
+            dispatcher_error_code, error_message = NamsimWrapper.get_error_message(error_code)
+            if dispatcher_error_code == 0:
+                additional_message = ' ({})'.format(error_message)
+            else:
+                additional_message = ''
+            raise Exception('Internal error has occurred with error code: {}{}.'.format(error_code, additional_message))
 
     def __init__(self, conf_path=None):
         self._id = None
