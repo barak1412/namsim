@@ -17,6 +17,7 @@ def _get_handler(dll_prefix):
     if os_platform == 'windows':
         # update PATH for windows dynamic loader
         os.environ['PATH'] = dll_dir + os.pathsep + os.environ['PATH']
+        
         platform_letter = 'W'
         platform_dll_type = 'dll'
     elif os_platform == 'linux':
