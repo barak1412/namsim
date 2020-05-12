@@ -2,7 +2,7 @@ import ctypes
 from namsim.data import get_data_path
 import platform
 import os
-from pkg_resources import get_distribution
+from namsim.constants import VERSION, DEFAULT_CONF_PATH
 
 
 def _get_handler(dll_prefix):
@@ -26,8 +26,8 @@ def _get_handler(dll_prefix):
     else:
         raise Exception('Unsupported platform: {}'.format(os_platform))
 
-    version_major = get_distribution('namsim').version.split('.')[0]
-    version_minor = get_distribution('namsim').version.split('.')[1]
+    version_major = VERSION.split('.')[0]
+    version_minor = VERSION.split('.')[1]
     dll_name = '{}_{}64_{}_{}.{}'.format(dll_prefix, platform_letter, version_major, version_minor, platform_dll_type)
     dll_path = os.path.join(dll_dir, dll_name)
     handler = ctypes.cdll.LoadLibrary(dll_path)
@@ -78,8 +78,7 @@ class NamsimWrapper(object):
     @staticmethod
     def namsim_init(namsim_id, conf_path=None):
         if conf_path is None:
-            conf_dir_name = 'default_namsim_conf'
-            conf_path = get_data_path(os.path.join(conf_dir_name, 'conf', 'namsim_config.xml'))
+            conf_path = DEFAULT_CONF_PATH
         conf_path = NamsimWrapper._prepare_encoded_string(conf_path)
 
         return NamsimWrapper._handler.NamsimInit(namsim_id, conf_path)

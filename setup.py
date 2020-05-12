@@ -7,8 +7,7 @@ setup(
     author="Barak David",
     license="MIT",
     keywords="Name similarity mock-up library.",
-    packages=['namsim', 'namsim.wrapper', 'namsim.data'],
-    package_data={'data': ['default_namsim_conf/*', 'bin/*']},
+    packages=['namsim', 'namsim.wrapper', 'namsim.data', 'namsim.constants'],
     include_package_data=True,
     python_requires='>=3'
 )

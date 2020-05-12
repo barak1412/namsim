@@ -1,8 +1,8 @@
 from namsim.data import get_data_path
+from namsim.constants import DEFAULT_CONF_DIRECTORY
 from namsim.base import Namsim
 import os
 import fnmatch
-import pkg_resources
 
 
 # replacing stub paths in the configurations
@@ -11,8 +11,7 @@ _STUB_PATH_NAME = 'STUB_PATH'
 
 def configuration_paths_rename():
     # set conf path and replace slash to backslash to support UNIX systems
-    conf_dir_name = 'default_namsim_conf'
-    conf_dir_path = get_data_path(conf_dir_name)
+    conf_dir_path = get_data_path(DEFAULT_CONF_DIRECTORY)
     conf_dir_path = conf_dir_path.replace(os.sep, '/')
 
     # change paths in all conf .xml files
